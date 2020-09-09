@@ -41,7 +41,7 @@ bool q_insert_head(queue_t *q, char *s)
     /* TODO: What should you do if the q is NULL? */
 
     if (!q)
-        q = q_new();
+        return false;
 
     newh = malloc(sizeof(list_ele_t));
     /* Don't forget to allocate space for the string and copy it */
