@@ -12,7 +12,10 @@
 queue_t *q_new()
 {
     queue_t *q = malloc(sizeof(queue_t));
-    /* TODO: What if malloc returned NULL? */
+
+    if (!q) /* return NULL if could not allocate space */
+        return NULL;
+
     q->head = NULL;
     return q;
 }
@@ -36,11 +39,16 @@ bool q_insert_head(queue_t *q, char *s)
 {
     list_ele_t *newh;
     /* TODO: What should you do if the q is NULL? */
+
+    if (!q)
+        q = q_new;
+
     newh = malloc(sizeof(list_ele_t));
     /* Don't forget to allocate space for the string and copy it */
     /* What if either call to malloc returns NULL? */
     newh->next = q->head;
     q->head = newh;
+    newh->value = s;
     return true;
 }
 
