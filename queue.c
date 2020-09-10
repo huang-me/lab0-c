@@ -48,7 +48,15 @@ bool q_insert_head(queue_t *q, char *s)
     /* What if either call to malloc returns NULL? */
     newh->next = q->head;
     q->head = newh;
-    newh->value = s;
+
+    newh->value = malloc(sizeof(char) * (strlen(s) + 1));
+    if (!newh->value) {
+        free(newh);
+        return false;
+    }
+    memset(newh->value, '\0', strlen(s) + 1);
+    strncpy(newh->value, s, strlen(s));
+
     return true;
 }
 
