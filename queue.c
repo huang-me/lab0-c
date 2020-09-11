@@ -39,33 +39,33 @@ void q_free(queue_t *q)
  */
 bool q_insert_head(queue_t *q, char *s)
 {
-    list_ele_t *newh;
+    list_ele_t *new;
 
     /* return false if the q is NULL */
     if (!q)
         return false;
 
-    newh = malloc(sizeof(list_ele_t));
+    new = malloc(sizeof(list_ele_t));
 
     /* allocate space for the string */
-    newh->value = malloc(sizeof(char) * (strlen(s) + 1));
+    new->value = malloc(sizeof(char) * (strlen(s) + 1));
 
     /* free the space if malloc returns NULL? */
-    if (!newh->value) {
-        free(newh);
+    if (!new->value) {
+        free(new);
         return false;
     }
 
     /* copy the string to the allocated space */
-    memset(newh->value, '\0', strlen(s) + 1);
-    strncpy(newh->value, s, strlen(s));
+    memset(new->value, '\0', strlen(s) + 1);
+    strncpy(new->value, s, strlen(s));
 
     if (!q->head) {
-        q->head = q->tail = newh;
-        newh->next = NULL;
+        q->head = q->tail = new;
+        new->next = NULL;
     } else {
-        newh->next = q->head;
-        q->head = newh;
+        new->next = q->head;
+        q->head = new;
     }
 
     q->size += 1;
@@ -82,21 +82,22 @@ bool q_insert_head(queue_t *q, char *s)
  */
 bool q_insert_tail(queue_t *q, char *s)
 {
-    /* TODO: You need to write the complete code for this function */
-    /* Remember: It should operate in O(1) time */
-    /* TODO: Remove the above comment when you are about to implement. */
     /* return false if q is NULL */
     if (!q)
         return false;
 
     list_ele_t *new;
+    /* allocate space for the new element */
     new = malloc(sizeof(list_ele_t));
 
+    /* return false if allocate error */
     if (!new)
         return false;
 
     new->value = malloc(sizeof(char) * (strlen(s) + 1));
 
+    /* free the space and return false if error when allocating space for the
+     * value */
     if (!new->value) {
         free(new);
         return false;
@@ -105,6 +106,7 @@ bool q_insert_tail(queue_t *q, char *s)
     memset(new->value, '\0', strlen(s) + 1);
     strncpy(new->value, s, strlen(s));
 
+    /* q->tail point to the new element and new->next point to NULL */
     new->next = NULL;
     if (!q->tail) {
         q->tail = q->head = new;
@@ -113,6 +115,7 @@ bool q_insert_tail(queue_t *q, char *s)
         q->tail = new;
     }
 
+    /* increase the size of queue */
     q->size += 1;
 
     return true;
