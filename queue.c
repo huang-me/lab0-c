@@ -17,6 +17,8 @@ queue_t *q_new()
         return NULL;
 
     q->head = NULL;
+    q->tail = NULL;
+    q->size = 0;
     return q;
 }
 
@@ -44,8 +46,6 @@ bool q_insert_head(queue_t *q, char *s)
         return false;
 
     newh = malloc(sizeof(list_ele_t));
-    newh->next = q->head;
-    q->head = newh;
 
     /* allocate space for the string */
     newh->value = malloc(sizeof(char) * (strlen(s) + 1));
@@ -59,6 +59,16 @@ bool q_insert_head(queue_t *q, char *s)
     /* copy the string to the allocated space */
     memset(newh->value, '\0', strlen(s) + 1);
     strncpy(newh->value, s, strlen(s));
+
+    if (!q->head) {
+        q->head = q->tail = newh;
+        newh->next = NULL;
+    } else {
+        newh->next = q->head;
+        q->head = newh;
+    }
+
+    q->size += 1;
 
     return true;
 }
@@ -75,7 +85,37 @@ bool q_insert_tail(queue_t *q, char *s)
     /* TODO: You need to write the complete code for this function */
     /* Remember: It should operate in O(1) time */
     /* TODO: Remove the above comment when you are about to implement. */
-    return false;
+    /* return false if q is NULL */
+    if (!q)
+        return false;
+
+    list_ele_t *new;
+    new = malloc(sizeof(list_ele_t));
+
+    if (!new)
+        return false;
+
+    new->value = malloc(sizeof(char) * (strlen(s) + 1));
+
+    if (!new->value) {
+        free(new);
+        return false;
+    }
+
+    memset(new->value, '\0', strlen(s) + 1);
+    strncpy(new->value, s, strlen(s));
+
+    new->next = NULL;
+    if (!q->tail) {
+        q->tail = q->head = new;
+    } else {
+        q->tail->next = new;
+        q->tail = new;
+    }
+
+    q->size += 1;
+
+    return true;
 }
 
 /*
