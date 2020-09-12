@@ -60,6 +60,10 @@ bool q_insert_head(queue_t *q, char *s)
         return false;
 
     new = malloc(sizeof(list_ele_t));
+    if (!new) {
+        free(new);
+        return false;
+    }
 
     /* allocate space for the string */
     new->value = malloc(sizeof(char) * (strlen(s) + 1));
