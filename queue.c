@@ -193,7 +193,7 @@ int q_size(queue_t *q)
 void q_reverse(queue_t *q)
 {
     /* test if q is NULL */
-    if (!q)
+    if (!q || q->size < 2)
         return;
 
     list_ele_t *tmp = q->head->next;
