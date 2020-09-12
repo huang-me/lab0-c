@@ -218,6 +218,48 @@ void q_reverse(queue_t *q)
  */
 void q_sort(queue_t *q)
 {
-    /* TODO: You need to write the code for this function */
-    /* TODO: Remove the above comment when you are about to implement. */
+    /* return if q have less than 2 elements */
+    if (!q || q->size < 2)
+        return;
+
+    merge_sort(&q->head);
+
+    return;
+}
+
+void merge_sort(list_ele_t **head)
+{
+    if (!(*head) || !((*head)->next))
+        return;
+
+    list_ele_t *tmp1, *tmp2;
+    tmp1 = (*head)->next;
+    tmp2 = *head;
+    while (tmp1 && tmp1->next) {
+        tmp1 = tmp1->next->next;
+        tmp2 = tmp2->next;
+    }
+    tmp1 = tmp2->next;
+    tmp2->next = NULL;
+    tmp2 = *head;
+
+    merge_sort(&tmp1);
+    merge_sort(&tmp2);
+
+    *head = NULL;
+    list_ele_t **tmp = head;
+    while (tmp1 && tmp2) {
+        if (strcmp(tmp1->value, tmp2->value) < 0) {
+            *tmp = tmp1;
+            tmp1 = tmp1->next;
+        } else {
+            *tmp = tmp2;
+            tmp2 = tmp2->next;
+        }
+        tmp = &((*tmp)->next);
+    }
+
+    *tmp = tmp1 ? tmp1 : tmp2;
+
+    return;
 }
