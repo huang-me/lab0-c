@@ -200,16 +200,16 @@ void q_reverse(queue_t *q)
     if (!q || q->size < 2)
         return;
 
-    list_ele_t *tmp = q->head->next;
+    list_ele_t *tmp = q->head->next, *store_head = q->head;
     q->tail->next = q->head;
     while (tmp != q->tail) {
+        q->tail->next = tmp;
         tmp = tmp->next;
-        q->head->next->next = q->tail->next;
-        q->tail->next = q->head->next;
-        q->head->next = tmp;
+        q->tail->next->next = q->head;
+        q->head = q->tail->next;
     }
-    q->tail = q->head;
-    q->head = q->head->next;
+    q->head = q->tail;
+    q->tail = store_head;
     q->tail->next = NULL;
 
     return;
@@ -264,6 +264,8 @@ void merge_sort(list_ele_t **head)
     }
 
     *tmp = tmp1 ? tmp1 : tmp2;
+
+    // printf("head: %s\n", (*head)->value);
 
     return;
 }
