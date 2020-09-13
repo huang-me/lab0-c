@@ -228,6 +228,9 @@ void q_sort(queue_t *q)
 
     merge_sort(&q->head);
 
+    while (q->tail->next)
+        q->tail = q->tail->next;
+
     return;
 }
 
