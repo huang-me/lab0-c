@@ -22,7 +22,7 @@ static cmd_ptr cmd_list = NULL;
 static param_ptr param_list = NULL;
 static bool block_flag = false;
 static bool prompt_flag = true;
-static char cmd_history[5][1024];
+static char *cmd_his[5];
 
 /* Am I timing a command that has the console blocked? */
 static bool block_timing = false;
@@ -219,24 +219,6 @@ static bool interpret_cmda(int argc, char *argv[])
     while (next_cmd && strcmp(argv[0], next_cmd->name) != 0)
         next_cmd = next_cmd->next;
     if (next_cmd) {
-        /* use an 2D-array to store the cmd history */
-        char tmpstring[1024];
-        memset(tmpstring, '\0', 1024);
-        for (int tmp = 0; tmp < argc; tmp++) {
-            strncat(tmpstring, argv[tmp], strlen(argv[tmp]));
-            strncat(tmpstring, " ", 1);
-        }
-
-        for (int tmp = 0; tmp < 4; tmp++) {
-            strncpy(cmd_history[tmp], cmd_history[tmp + 1], 1024);
-        }
-
-        // if (next_cmd->name == "\033[A") {
-        //    memset(next_cmd->name, '\0', 1024);
-        //    strncpy(next_cmd->name, cmd_history[4], 1024);
-        //}
-        // printf("next_cmd: %s\n", next_cmd->name);
-
         ok = next_cmd->operation(argc, argv);
         if (!ok)
             record_error();
@@ -547,6 +529,12 @@ static char *readline()
         report_noreturn(1, linebuf);
     }
 
+    for (int tmp = 0; tmp < 4; tmp++) {
+        memset(cmd_his[tmp], '\0', 1024);
+        strncpy(cmd_his[tmp], cmd_his[tmp + 1], 1024);
+    }
+    strncpy(cmd_his[4], linebuf, 1024);
+
     return linebuf;
 }
 
@@ -585,6 +573,13 @@ int cmd_select(int nfds,
     char *cmdline;
     int infd;
     fd_set local_readset;
+
+    /* initialize the cmd_his */
+    for (int tmp = 0; tmp < 5; tmp++) {
+        cmd_his[tmp] = malloc(1024);
+        memset(cmd_his[tmp], '\0', 1024);
+    }
+
     while (!block_flag && read_ready()) {
         cmdline = readline();
         interpret_cmd(cmdline);
