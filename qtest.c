@@ -104,6 +104,10 @@ static void console_init()
               NULL);
     add_param("fail", &fail_limit,
               "Number of times allow queue operations to return false", NULL);
+
+    /* add cmd to make arrows work in the program */
+    // add_cmd("\033[A", do_show, "                | Load the last command");
+    // add_cmd("\033[B", do_show, "                | Load the next command");
 }
 
 static bool do_new(int argc, char *argv[])

@@ -22,6 +22,7 @@ static cmd_ptr cmd_list = NULL;
 static param_ptr param_list = NULL;
 static bool block_flag = false;
 static bool prompt_flag = true;
+static char cmd_history[5][1024];
 
 /* Am I timing a command that has the console blocked? */
 static bool block_timing = false;
@@ -193,6 +194,7 @@ static char **parse_args(char *line, int *argcp)
 
     free_block(buf, len + 1);
     *argcp = argc;
+
     return argv;
 }
 
@@ -217,9 +219,28 @@ static bool interpret_cmda(int argc, char *argv[])
     while (next_cmd && strcmp(argv[0], next_cmd->name) != 0)
         next_cmd = next_cmd->next;
     if (next_cmd) {
+        /* use an 2D-array to store the cmd history */
+        char tmpstring[1024];
+        memset(tmpstring, '\0', 1024);
+        for (int tmp = 0; tmp < argc; tmp++) {
+            strncat(tmpstring, argv[tmp], strlen(argv[tmp]));
+            strncat(tmpstring, " ", 1);
+        }
+
+        for (int tmp = 0; tmp < 4; tmp++) {
+            strncpy(cmd_history[tmp], cmd_history[tmp + 1], 1024);
+        }
+
+        // if (next_cmd->name == "\033[A") {
+        //    memset(next_cmd->name, '\0', 1024);
+        //    strncpy(next_cmd->name, cmd_history[4], 1024);
+        //}
+        // printf("next_cmd: %s\n", next_cmd->name);
+
         ok = next_cmd->operation(argc, argv);
         if (!ok)
             record_error();
+
     } else {
         report(1, "Unknown command '%s'", argv[0]);
         record_error();
